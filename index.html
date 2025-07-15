@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>GuteGym</title>
-  <style>
+  <style id="theme-style">
     body {
       background-color: #121212;
       color: #ffffff;
@@ -11,7 +11,6 @@
       margin: 0;
       padding: 0;
     }
-
     header {
       background-color: #1f1f1f;
       padding: 1rem;
@@ -19,26 +18,20 @@
       justify-content: space-between;
       align-items: center;
     }
-
     header h1 {
       color: gold;
       margin: 0;
       font-size: 1.5rem;
     }
-
-    .login {
-      background-color: #292929;
+    .login, .container, footer {
       padding: 1rem;
-      text-align: center;
     }
-
     .login input {
       margin: 0.3rem;
       padding: 0.5rem;
       border-radius: 5px;
       border: none;
     }
-
     .login button {
       padding: 0.5rem 1rem;
       background-color: #2196f3;
@@ -47,57 +40,20 @@
       border-radius: 5px;
       cursor: pointer;
     }
-
-    .container {
-      padding: 1rem;
-    }
-
-    .section-title {
-      font-weight: bold;
-      margin: 1rem 0 0.5rem;
-      font-size: 1.2rem;
-    }
-
-    .quick-start {
+    .quick-start, .routine, .stats {
       background-color: #1f1f1f;
       padding: 1rem;
       border-radius: 10px;
       margin-bottom: 1rem;
     }
-
-    .quick-start button {
-      width: 100%;
-      padding: 0.7rem;
-      background-color: #2c2c2c;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .routines {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .routine {
-      background-color: #1f1f1f;
-      padding: 1rem;
-      border-radius: 10px;
-    }
-
-    .routine h3 {
+    .routine h3, .stats h3 {
       margin: 0 0 0.3rem;
     }
-
-    .routine p {
+    .routine p, .stats p {
       color: #aaaaaa;
       font-size: 0.9rem;
-      margin: 0 0 0.7rem;
     }
-
-    .routine button {
+    .routine button, .quick-start button {
       background-color: #2196f3;
       color: white;
       border: none;
@@ -105,58 +61,118 @@
       border-radius: 5px;
       cursor: pointer;
     }
-
-    footer {
-      background-color: #1f1f1f;
-      padding: 1rem;
-      text-align: center;
-      color: #888;
-      font-size: 0.9rem;
+    .theme-toggle {
+      background: lightgreen;
+      border: 1px solid white;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <header>
     <h1>GuteGym</h1>
-    <span>Entrenamiento</span>
+    <div>
+      <span>Entrenamiento</span>
+      <button class="theme-toggle" onclick="toggleTheme()">Modo Claro</button>
+    </div>
   </header>
 
   <div class="login">
     <input type="text" placeholder="Usuario">
     <input type="password" placeholder="Contraseña">
-    <button>Iniciar Sesión</button>
+    <button onclick="alert('Login simulado')">Iniciar Sesión</button>
   </div>
 
   <div class="container">
-    <div class="section-title">Inicio Rápido</div>
     <div class="quick-start">
-      <button>+ Empezar Entrenamiento Vacío</button>
+      <button onclick="mostrarFormularioPHP()">+ Nueva Rutina (PHP)</button>
     </div>
 
-    <div class="section-title">Rutinas</div>
-    <div class="routines">
-      <div class="routine">
-        <h3>Empuje</h3>
-        <p>Aperturas (Máquina), Press de Hombros (Mancuerna), Press Inclinado (Mancuerna)...</p>
-        <button>Empezar Rutina</button>
-      </div>
+    <form id="formularioPHP" style="display:none; background:#1f1f1f; padding:1rem; border-radius:10px; margin-bottom:1rem;" onsubmit="enviarFormularioPHP(event)">
+      <input type="text" id="nombrePHP" placeholder="Nombre de rutina" required>
+      <input type="text" id="ejerciciosPHP" placeholder="Ejercicios separados por coma" required>
+      <button type="submit">Guardar Rutina en PHP</button>
+    </form>
 
-      <div class="routine">
-        <h3>Tracción</h3>
-        <p>Jalón al Pecho, Remo con Cable, Curl de Bíceps (Mancuerna)...</p>
-        <button>Empezar Rutina</button>
-      </div>
+    <div class="routines" id="rutinas"></div>
 
-      <div class="routine">
-        <h3>Piernardiums</h3>
-        <p>Press de Piernas, Sentadilla Smith, Extensión de Pierna, Curl Acostado...</p>
-        <button>Empezar Rutina</button>
-      </div>
+    <div class="stats">
+      <h3>Estadísticas</h3>
+      <p id="stat-total">Total de Rutinas: 0</p>
     </div>
   </div>
 
   <footer>
     GuteGym © 2025 - Hecho con amor y fierros
   </footer>
+
+  <script>
+    const rutinasEl = document.getElementById('rutinas');
+    const statEl = document.getElementById('stat-total');
+    let claro = false;
+
+    function guardarRutinas(rutinas) {
+      localStorage.setItem('rutinasGute', JSON.stringify(rutinas));
+      actualizarVista();
+    }
+
+    function obtenerRutinas() {
+      return JSON.parse(localStorage.getItem('rutinasGute')) || [];
+    }
+
+    function actualizarVista() {
+      const rutinas = obtenerRutinas();
+      rutinasEl.innerHTML = '';
+      rutinas.forEach((r, i) => {
+        rutinasEl.innerHTML += `
+          <div class="routine">
+            <h3>${r.nombre}</h3>
+            <p>${r.ejercicios}</p>
+            <button onclick="alert('Ejecutando ${r.nombre}')">Empezar Rutina</button>
+          </div>`;
+      });
+      statEl.textContent = `Total de Rutinas: ${rutinas.length}`;
+    }
+
+    function toggleTheme() {
+      claro = !claro;
+      const estilo = document.getElementById('theme-style');
+      estilo.innerHTML = claro ? `
+        body { background: #fff; color: #000; font-family: 'Segoe UI'; margin:0 }
+        header, .quick-start, .routine, .stats, footer {
+          background: #f0f0f0; color: #000;
+        }
+        .theme-toggle { border: 1px solid #000; color: #000; }
+        .routine button, .quick-start button { background-color: #4caf50; color: white; }
+        .login button { background-color: #4caf50; }
+      ` : originalStyle;
+    }
+
+    function mostrarFormularioPHP() {
+      const form = document.getElementById('formularioPHP');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function enviarFormularioPHP(e) {
+      e.preventDefault();
+      const nombre = document.getElementById('nombrePHP').value;
+      const ejercicios = document.getElementById('ejerciciosPHP').value;
+
+      fetch('guardar_rutina.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `nombre=${encodeURIComponent(nombre)}&ejercicios=${encodeURIComponent(ejercicios)}`
+      })
+      .then(res => res.text())
+      .then(msg => alert(msg))
+      .catch(err => alert('Error al enviar a PHP'));
+    }
+
+    const originalStyle = document.getElementById('theme-style').innerHTML;
+    actualizarVista();
+  </script>
 </body>
 </html>
