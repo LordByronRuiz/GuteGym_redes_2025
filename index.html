@@ -1,1 +1,162 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>GuteGym</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #1f1f1f;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      color: gold;
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .login {
+      background-color: #292929;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .login input {
+      margin: 0.3rem;
+      padding: 0.5rem;
+      border-radius: 5px;
+      border: none;
+    }
+
+    .login button {
+      padding: 0.5rem 1rem;
+      background-color: #2196f3;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .container {
+      padding: 1rem;
+    }
+
+    .section-title {
+      font-weight: bold;
+      margin: 1rem 0 0.5rem;
+      font-size: 1.2rem;
+    }
+
+    .quick-start {
+      background-color: #1f1f1f;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .quick-start button {
+      width: 100%;
+      padding: 0.7rem;
+      background-color: #2c2c2c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .routines {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .routine {
+      background-color: #1f1f1f;
+      padding: 1rem;
+      border-radius: 10px;
+    }
+
+    .routine h3 {
+      margin: 0 0 0.3rem;
+    }
+
+    .routine p {
+      color: #aaaaaa;
+      font-size: 0.9rem;
+      margin: 0 0 0.7rem;
+    }
+
+    .routine button {
+      background-color: #2196f3;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    footer {
+      background-color: #1f1f1f;
+      padding: 1rem;
+      text-align: center;
+      color: #888;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>GuteGym</h1>
+    <span>Entrenamiento</span>
+  </header>
+
+  <div class="login">
+    <input type="text" placeholder="Usuario">
+    <input type="password" placeholder="Contraseña">
+    <button>Iniciar Sesión</button>
+  </div>
+
+  <div class="container">
+    <div class="section-title">Inicio Rápido</div>
+    <div class="quick-start">
+      <button>+ Empezar Entrenamiento Vacío</button>
+    </div>
+
+    <div class="section-title">Rutinas</div>
+    <div class="routines">
+      <div class="routine">
+        <h3>Empuje</h3>
+        <p>Aperturas (Máquina), Press de Hombros (Mancuerna), Press Inclinado (Mancuerna)...</p>
+        <button>Empezar Rutina</button>
+      </div>
+
+      <div class="routine">
+        <h3>Tracción</h3>
+        <p>Jalón al Pecho, Remo con Cable, Curl de Bíceps (Mancuerna)...</p>
+        <button>Empezar Rutina</button>
+      </div>
+
+      <div class="routine">
+        <h3>Piernardiums</h3>
+        <p>Press de Piernas, Sentadilla Smith, Extensión de Pierna, Curl Acostado...</p>
+        <button>Empezar Rutina</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    GuteGym © 2025 - Hecho con amor y fierros
+  </footer>
+</body>
+</html>
