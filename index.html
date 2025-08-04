@@ -61,14 +61,6 @@
       border-radius: 5px;
       cursor: pointer;
     }
-    .theme-toggle {
-      background: lightgreen;
-      border: 1px solid white;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
@@ -76,7 +68,6 @@
     <h1>GuteGym</h1>
     <div>
       <span>Entrenamiento</span>
-      <button class="theme-toggle" onclick="toggleTheme()">Modo Claro</button>
     </div>
   </header>
 
@@ -135,20 +126,6 @@
           </div>`;
       });
       statEl.textContent = `Total de Rutinas: ${rutinas.length}`;
-    }
-
-    function toggleTheme() {
-      claro = !claro;
-      const estilo = document.getElementById('theme-style');
-      estilo.innerHTML = claro ? `
-        body { background: #fff; color: #000; font-family: 'Segoe UI'; margin:0 }
-        header, .quick-start, .routine, .stats, footer {
-          background: #f0f0f0; color: #000;
-        }
-        .theme-toggle { border: 1px solid #000; color: #000; }
-        .routine button, .quick-start button { background-color: #4caf50; color: white; }
-        .login button { background-color: #4caf50; }
-      ` : originalStyle;
     }
 
     function mostrarFormularioPHP() {
