@@ -80,13 +80,19 @@
   <div class="container">
     <div class="quick-start">
       <button onclick="mostrarFormularioPHP()">+ Nueva Rutina (PHP)</button>
+      <body onload="mostrarFormularioPHP()">
     </div>
 
-    <form id="formularioPHP" style="display:none; background:#1f1f1f; padding:1rem; border-radius:10px; margin-bottom:1rem;" onsubmit="enviarFormularioPHP(event)">
-      <input type="text" id="nombrePHP" placeholder="Nombre de rutina" required>
-      <input type="text" id="ejerciciosPHP" placeholder="Ejercicios separados por coma" required>
-      <button type="submit">Guardar Rutina en PHP</button>
-    </form>
+    <script>
+      function mostrarFormularioPHP() {
+      <form method="post" style="display:container; background:#1f1f1f; padding:1rem; border-radius:10px; margin-bottom:1rem;" action="guardar_rutina.php">
+        Nombre de rutina: <input type="text" name="fname">
+        <input type="submit">
+        Ejercicio 1: <input type="text" name="fname">
+        <!-- <button type="submit">Guardar Rutina en PHP</button> -->
+      </form>
+    }
+    </script>
 
     <div class="routines" id="rutinas"></div>
 
@@ -99,57 +105,5 @@
   <footer>
     GuteGym © 2025 - Hecho con amor y fierros
   </footer>
-
-  <script>
-    const rutinasEl = document.getElementById('rutinas');
-    const statEl = document.getElementById('stat-total');
-    let claro = false;
-
-    function guardarRutinas(rutinas) {
-      localStorage.setItem('rutinasGute', JSON.stringify(rutinas));
-      actualizarVista();
-    }
-
-    function obtenerRutinas() {
-      return JSON.parse(localStorage.getItem('rutinasGute')) || [];
-    }
-
-    function actualizarVista() {
-      const rutinas = obtenerRutinas();
-      rutinasEl.innerHTML = '';
-      rutinas.forEach((r, i) => {
-        rutinasEl.innerHTML += `
-          <div class="routine">
-            <h3>${r.nombre}</h3>
-            <p>${r.ejercicios}</p>
-            <button onclick="alert('Ejecutando ${r.nombre}')">Empezar Rutina</button>
-          </div>`;
-      });
-      statEl.textContent = `Total de Rutinas: ${rutinas.length}`;
-    }
-
-    function mostrarFormularioPHP() {
-      const form = document.getElementById('formularioPHP');
-      form.style.display = form.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function enviarFormularioPHP(e) {
-      e.preventDefault();
-      const nombre = document.getElementById('nombrePHP').value;
-      const ejercicios = document.getElementById('ejerciciosPHP').value;
-
-      fetch('guardar_rutina.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `nombre=${encodeURIComponent(nombre)}&ejercicios=${encodeURIComponent(ejercicios)}`
-      })
-      .then(res => res.text())
-      .then(msg => alert(msg))
-      .catch(err => alert('Error al enviar a PHP'));
-    }
-
-    const originalStyle = document.getElementById('theme-style').innerHTML;
-    actualizarVista();
-  </script>
 </body>
 </html>
