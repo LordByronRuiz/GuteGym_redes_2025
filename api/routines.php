@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-include_once '../config/database.php';
+include_once __DIR__ . '/../config/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (isset($_GET['user_id'])) {
