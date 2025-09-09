@@ -3,11 +3,19 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json');
+
+// Manejar preflight requests
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    exit(0);
+}
+
 include_once __DIR__ . '/../config/database.php';
 
-$data = json_decode(file_get_contents('php://input'), true);
+// Obtener datos del cuerpo de la solicitud
+$input = file_get_contents('php://input');
+$data = json_decode($input, true);
 
-if (!empty($data['name']) && !empty($data['email']) && !empty($data['password'])) {
+if ($data && !empty($data['name']) && !empty($data['email']) && !empty($data['password'])) {
     $name = $data['name'];
     $email = $data['email'];
     $password = password_hash($data['password'], PASSWORD_DEFAULT);
@@ -28,9 +36,10 @@ if (!empty($data['name']) && !empty($data['email']) && !empty($data['password'])
         
         echo json_encode(['success' => true, 'message' => 'Usuario registrado correctamente.']);
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'message' => 'Error en el servidor.']);
+        error_log("Error en registro: " . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Error en el servidor: ' . $e->getMessage()]);
     }
 } else {
-    echo json_encode(['success' => false, 'message' => 'Datos incompletos.']);
+    echo json_encode(['success' => false, 'message' => 'Datos incompletos o formato incorrecto.']);
 }
 ?>
