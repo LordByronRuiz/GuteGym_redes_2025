@@ -1,8 +1,8 @@
 <?php
 $host = 'localhost';
 $dbname = 'gymtrack_db';
-$username = 'root';
-$password = '';
+$username = 'phpmyadmin';
+$password = 'RedesInformaticas';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
