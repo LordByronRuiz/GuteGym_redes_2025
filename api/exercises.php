@@ -52,5 +52,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     } else {
         echo json_encode(['success' => false, 'message' => 'Datos incompletos.']);
     }
+    
+}
+elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    if (isset($_GET['exercise_id'])) {
+        $exercise_id = $_GET['exercise_id'];
+        
+        try {
+            $stmt = $pdo->prepare("DELETE FROM exercises WHERE id = ?");
+            $stmt->execute([$exercise_id]);
+            
+            echo json_encode(['success' => true, 'message' => 'Ejercicio eliminado correctamente.']);
+        } catch (PDOException $e) {
+            echo json_encode(['success' => false, 'message' => 'Error al eliminar ejercicio.']);
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'ID de ejercicio requerido.']);
+    }
 }
 ?>

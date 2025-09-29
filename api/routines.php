@@ -3,6 +3,7 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json');
+
 include_once __DIR__ . '/../config/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -10,13 +11,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $user_id = $_GET['user_id'];
         
         try {
-            $stmt = $pdo->prepare("SELECT id, name FROM routines WHERE user_id = ?");
+            // Obtener rutinas del usuario Y rutinas predeterminadas (user_id IS NULL)
+            $stmt = $pdo->prepare("SELECT id, name, is_default FROM routines WHERE user_id = ? OR user_id IS NULL ORDER BY is_default, name");
             $stmt->execute([$user_id]);
             $routines = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
             echo json_encode(['success' => true, 'routines' => $routines]);
         } catch (PDOException $e) {
-            echo json_encode(['success' => false, 'message' => 'Error al obtener rutinas.']);
+            echo json_encode(['success' => false, 'message' => 'Error al obtener rutinas: ' . $e->getMessage()]);
         }
     }
 } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -27,12 +29,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $name = $data['name'];
         
         try {
-            $stmt = $pdo->prepare("INSERT INTO routines (user_id, name) VALUES (?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO routines (user_id, name, is_default) VALUES (?, ?, FALSE)");
             $stmt->execute([$user_id, $name]);
             
             echo json_encode(['success' => true, 'message' => 'Rutina creada correctamente.']);
         } catch (PDOException $e) {
-            echo json_encode(['success' => false, 'message' => 'Error al crear rutina.']);
+            echo json_encode(['success' => false, 'message' => 'Error al crear rutina: ' . $e->getMessage()]);
         }
     } else {
         echo json_encode(['success' => false, 'message' => 'Datos incompletos.']);
