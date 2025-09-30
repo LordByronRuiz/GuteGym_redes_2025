@@ -7,8 +7,9 @@ echo "=== Test de Conexión a Base de Datos ===\n\n";
 $configs = [
     ['host' => 'localhost', 'user' => 'root', 'pass' => ''],
     ['host' => '127.0.0.1', 'user' => 'root', 'pass' => ''],
-    ['host' => 'localhost', 'user' => 'admin', 'pass' => ''],
-    // Agrega más configuraciones según tu servidor
+    ['host' => 'server-prog', 'user' => 'phpmyadmin', 'pass' => 'RedesInformaticas'],
+    ['host' => 'server-prog', 'user' => 'phpmyadmin', 'pass' => 'RedesInformaticas'],
+
 ];
 
 $dbname = 'gymtrack_db';
