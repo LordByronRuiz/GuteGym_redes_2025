@@ -9,7 +9,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
 
-include_once __DIR__ . '/../config/database.php';
+// Incluir configuración con manejo de errores mejorado
+$config_path = __DIR__ . '/../config/database.php';
+if (!file_exists($config_path)) {
+    echo json_encode(['success' => false, 'message' => 'Archivo de configuración no encontrado: ' . $config_path]);
+    exit;
+}
+
+include_once $config_path;
+
+// Verificar si la conexión se estableció
+if (!isset($pdo)) {
+    echo json_encode(['success' => false, 'message' => 'Conexión a BD no inicializada']);
+    exit;
+}
 
 // Rutinas predeterminadas
 $defaultRoutines = [
@@ -38,28 +51,55 @@ $defaultRoutines = [
 ];
 
 try {
+    // Verificar que la base de datos existe
+    $stmt = $pdo->query("SELECT DATABASE() as db_name");
+    $db_info = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (empty($db_info['db_name'])) {
+        echo json_encode(['success' => false, 'message' => 'No se pudo seleccionar la base de datos. Verifica que exista.']);
+        exit;
+    }
+    
+    $created_count = 0;
+    $errors = [];
+    
     // Insertar rutinas predeterminadas
     foreach ($defaultRoutines as $routineName => $exercises) {
-        // Verificar si la rutina ya existe
-        $stmt = $pdo->prepare("SELECT id FROM routines WHERE name = ? AND user_id IS NULL");
-        $stmt->execute([$routineName]);
-        
-        if ($stmt->rowCount() == 0) {
-            // Insertar rutina con user_id NULL para rutinas predeterminadas
-            $stmt = $pdo->prepare("INSERT INTO routines (name, user_id, is_default) VALUES (?, NULL, TRUE)");
+        try {
+            // Verificar si la rutina ya existe
+            $stmt = $pdo->prepare("SELECT id FROM routines WHERE name = ? AND user_id IS NULL");
             $stmt->execute([$routineName]);
-            $routineId = $pdo->lastInsertId();
             
-            // Insertar ejercicios
-            foreach ($exercises as $exercise) {
-                $stmt = $pdo->prepare("INSERT INTO exercises (routine_id, name, sets, reps, weight) VALUES (?, ?, ?, ?, ?)");
-                $stmt->execute([$routineId, $exercise['name'], $exercise['sets'], $exercise['reps'], $exercise['weight']]);
+            if ($stmt->rowCount() == 0) {
+                // Insertar rutina con user_id NULL para rutinas predeterminadas
+                $stmt = $pdo->prepare("INSERT INTO routines (name, user_id, is_default) VALUES (?, NULL, TRUE)");
+                $stmt->execute([$routineName]);
+                $routineId = $pdo->lastInsertId();
+                
+                // Insertar ejercicios
+                foreach ($exercises as $exercise) {
+                    $stmt = $pdo->prepare("INSERT INTO exercises (routine_id, name, sets, reps, weight) VALUES (?, ?, ?, ?, ?)");
+                    $stmt->execute([$routineId, $exercise['name'], $exercise['sets'], $exercise['reps'], $exercise['weight']]);
+                }
+                
+                $created_count++;
             }
+        } catch (PDOException $e) {
+            $errors[] = "Error con rutina '$routineName': " . $e->getMessage();
         }
     }
     
-    echo json_encode(['success' => true, 'message' => 'Rutinas predeterminadas creadas correctamente']);
+    if ($created_count > 0) {
+        $message = "Se crearon $created_count rutinas predeterminadas correctamente.";
+        if (!empty($errors)) {
+            $message .= " Errores: " . implode('; ', $errors);
+        }
+        echo json_encode(['success' => true, 'message' => $message]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'No se crearon rutinas. Posiblemente ya existían. Errores: ' . implode('; ', $errors)]);
+    }
+    
 } catch (PDOException $e) {
-    echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => 'Error de base de datos: ' . $e->getMessage()]);
 }
 ?>
