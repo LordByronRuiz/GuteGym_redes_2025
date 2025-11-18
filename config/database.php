@@ -1,5 +1,5 @@
 <?php
-$host = 'server-prog';
+$host = 'localhost';
 $dbname = 'gymtrack_db';
 $username = 'phpmyadmin';
 $password = 'RedesInformaticas';
